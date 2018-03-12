@@ -23,6 +23,9 @@ class cell {
     this.alive = alive;
     this.age = age;
   }
+  getAge() {
+    return this.age;
+  }
 };
 
 //-----------------------------------------------------\\
@@ -37,8 +40,8 @@ function setup() {
   frameRate(10);
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
-      //grid[i][j] = new cell(floor(random(2)),0);
-      grid[i][j] = floor(random(2));
+      grid[i][j] = new cell(floor(random(2)),0);
+      //grid[i][j] = floor(random(2));
     }
   }
 }
@@ -53,17 +56,17 @@ function go() {
 function draw() {
   background(255);
   if (mouseIsPressed && mouseX >= 0 && mouseX < width) {
-    if (grid[floor(mouseX/resolution)][floor(mouseY/resolution)] == 1){
-      grid[floor(mouseX/resolution)][floor(mouseY/resolution)] = 0;
+    if (grid[floor(mouseX/resolution)][floor(mouseY/resolution)].alive == 1){
+      grid[floor(mouseX/resolution)][floor(mouseY/resolution)].alive = 0;
     } else {
-      grid[floor(mouseX/resolution)][floor(mouseY/resolution)] = 1;
+      grid[floor(mouseX/resolution)][floor(mouseY/resolution)].alive = 1;
     }
   }
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
       let x = i * resolution;
       let y = j * resolution;
-      if (grid[i][j] == 1) {
+      if (grid[i][j].alive == 1) {
         fill(0);
         stroke(255);
         rect(x, y, resolution - 1 , resolution - 1);
@@ -76,7 +79,7 @@ function draw() {
   // fill each spot in new 2D array with dead cells
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
-      next[i][j] = new cell(0,0);
+      next[i][j] = new cell(floor(random(2)),0);
     }
   }
 
@@ -84,14 +87,14 @@ function draw() {
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
       // count live neighbors
-      let state = grid[i][j];
+      let state = grid[i][j].alive;
         let neighbors = countNeighbors(grid, i, j);
         if (state == 0 && neighbors == 3) {
-          next[i][j] = 1;
+          next[i][j].alive = 1;
         } else if (state == 1 && (neighbors < 2 || neighbors > 3) ) {
-          next[i][j] = 0;
+          next[i][j].alive = 0;
         } else {
-          next[i][j] = state;
+          next[i][j].alive = state;
         }
     }
   }
@@ -109,10 +112,10 @@ function countNeighbors(grid, x, y) {
     for (let j = -1; j < 2; j++) {
       let col = (x + i + cols) % cols;
       let row = (y + j + rows) % rows;
-      sum += grid[col][row];
+      sum += grid[col][row].alive;
     }
   }
-  sum -= grid[x][y];
+  sum -= grid[x][y].alive;
   return sum;
 }
 //-----------------------------------------------------\\
