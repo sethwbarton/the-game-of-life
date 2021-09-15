@@ -6,3 +6,6 @@ This repository holds a place near to my heart as it was one of the first things
 to recreate Conway's game of life, written in C, and run on a LED screen hooked up to some microcontroller. It was one of those labs that just had me enthralled
 and also in tears because of how difficult it was. At some point I decided to recreate that lab (or at least some semblance of it) in the browser. This is it. 
 
+## To Run This
+
+All you need to do is download the code and open up index.html in your browser. Just double click it on most operating systems. Works best in Google Chrome.
