@@ -15,8 +15,10 @@ let grid;
 let cols;
 let rows;
 let resolution = 20;
-var button;
+var goButton;
+var cleanButton;
 let goPressed = false;
+let clearPressed = false;
 
 class cell {
   constructor(alive,age) {
@@ -32,8 +34,10 @@ function setup() {
   cols = floor(width / resolution);
   rows = floor(height / resolution);
   grid = make2DArray(cols,rows);
-  button = createButton('Go!');
-  button.mousePressed(go);
+  goButton = createButton('Go!');
+  cleanButton = createButton('Clear');
+  goButton.mousePressed(go);
+  cleanButton.mousePressed(clean)
   frameRate(10);
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
@@ -48,10 +52,24 @@ function go() {
   goPressed = true;
 }
 
+function clean() {
+ clearPressed = true;
+}
+
 
 //-----------------------------------------------------\\
 function draw() {
   background(255);
+  if (clearPressed) {
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        grid[i][j] = 0
+      }
+    }
+    clearPressed = false
+    return
+  }
+
   if (mouseIsPressed && mouseX >= 0 && mouseX < width) {
     if (grid[floor(mouseX/resolution)][floor(mouseY/resolution)] == 1){
       grid[floor(mouseX/resolution)][floor(mouseY/resolution)] = 0;
@@ -59,6 +77,7 @@ function draw() {
       grid[floor(mouseX/resolution)][floor(mouseY/resolution)] = 1;
     }
   }
+
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
       let x = i * resolution;
@@ -68,35 +87,35 @@ function draw() {
         stroke(255);
         rect(x, y, resolution - 1 , resolution - 1);
       }
-
     }
   }
+
   if(goPressed) {
-  let next = make2DArray(cols,rows);
-  // fill each spot in new 2D array with dead cells
-  for (let i = 0; i < cols; i++) {
-    for (let j = 0; j < rows; j++) {
-      next[i][j] = new cell(0,0);
+    let next = make2DArray(cols,rows);
+    // fill each spot in new 2D array with dead cells
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        next[i][j] = new cell(0,0);
+      }
     }
-  }
 
-  // compute next based on the current grid
-  for (let i = 0; i < cols; i++) {
-    for (let j = 0; j < rows; j++) {
-      // count live neighbors
-      let state = grid[i][j];
-        let neighbors = countNeighbors(grid, i, j);
-        if (state == 0 && neighbors == 3) {
-          next[i][j] = 1;
-        } else if (state == 1 && (neighbors < 2 || neighbors > 3) ) {
-          next[i][j] = 0;
-        } else {
-          next[i][j] = state;
-        }
+    // compute next based on the current grid
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        // count live neighbors
+        let state = grid[i][j];
+          let neighbors = countNeighbors(grid, i, j);
+          if (state == 0 && neighbors == 3) {
+            next[i][j] = 1;
+          } else if (state == 1 && (neighbors < 2 || neighbors > 3) ) {
+            next[i][j] = 0;
+          } else {
+            next[i][j] = state;
+          }
+      }
     }
+    grid = next;
   }
-  grid = next;
-}
 }
 //-----------------------------------------------------\\
 
